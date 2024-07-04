@@ -136,7 +136,7 @@ jobs:
 
     strategy:
       matrix:
-        test-name: ['generic', 'express', 'quickstart', 'ap-flows', 'elements', 'sessions']
+        test-name: ['generic', 'express', 'quickstart', 'ap-flows', 'elements', 'sessions', 'expoWeb']
         test-project: ['chrome']
         include:
           - test-name: 'nextjs'
