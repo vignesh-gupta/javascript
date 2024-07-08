@@ -26,11 +26,13 @@ import type {
   OpenProps,
   OrganizationProfileLinkProps,
   OrganizationProfilePageProps,
+  UserButtonActionProps,
+  UserButtonLinkProps,
   UserProfileLinkProps,
   UserProfilePageProps,
   WithClerkProp,
 } from '../types';
-import { useOrganizationProfileCustomPages, useUserProfileCustomPages } from '../utils';
+import { useOrganizationProfileCustomPages, useUserButtonCustomMenuItems, useUserProfileCustomPages } from '../utils';
 import { withClerk } from './withClerk';
 
 type UserProfileExportType = typeof _UserProfile & {
@@ -41,6 +43,9 @@ type UserProfileExportType = typeof _UserProfile & {
 type UserButtonExportType = typeof _UserButton & {
   UserProfilePage: typeof UserProfilePage;
   UserProfileLink: typeof UserProfileLink;
+  MenuItems: typeof MenuItems;
+  Action: typeof MenuAction;
+  Link: typeof MenuLink;
 };
 
 type UserButtonPropsWithoutCustomPages = Without<UserButtonProps, 'userProfileProps'> & {
@@ -208,12 +213,14 @@ const _UserButton = withClerk(
   ({ clerk, ...props }: WithClerkProp<PropsWithChildren<UserButtonPropsWithoutCustomPages>>) => {
     const { customPages, customPagesPortals } = useUserProfileCustomPages(props.children);
     const userProfileProps = Object.assign(props.userProfileProps || {}, { customPages });
+    const { customMenuItems } = useUserButtonCustomMenuItems(props.children);
+
     return (
       <Portal
         mount={clerk.mountUserButton}
         unmount={clerk.unmountUserButton}
         updateProps={(clerk as any).__unstable__updateProps}
-        props={{ ...props, userProfileProps }}
+        props={{ ...props, userProfileProps, customMenuItems }}
         customPagesPortals={customPagesPortals}
       />
     );
@@ -221,9 +228,24 @@ const _UserButton = withClerk(
   'UserButton',
 );
 
+export function MenuItems({ children }: PropsWithChildren) {
+  return <>{children}</>;
+}
+
+export function MenuAction({ children }: PropsWithChildren<UserButtonActionProps>) {
+  return <>{children}</>;
+}
+
+export function MenuLink({ children }: PropsWithChildren<UserButtonLinkProps>) {
+  return <>{children}</>;
+}
+
 export const UserButton: UserButtonExportType = Object.assign(_UserButton, {
   UserProfilePage,
   UserProfileLink,
+  MenuItems,
+  Action: MenuAction,
+  Link: MenuLink,
 });
 
 export function OrganizationProfilePage({ children }: PropsWithChildren<OrganizationProfilePageProps>) {

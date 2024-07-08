@@ -1,20 +1,41 @@
 import type { ActiveSessionResource } from '@clerk/types';
 
 import type { ElementDescriptor, ElementId } from '../../../ui/customizables/elementDescriptors';
+import { useRouter } from '../../../ui/router';
+import { USER_BUTTON_ITEM_ID } from '../../constants';
+import { useUserButtonContext } from '../../contexts';
 import type { LocalizationKey } from '../../customizables';
 import { descriptors, Flex, localizationKeys } from '../../customizables';
 import { Action, Actions, PreviewButton, SmallAction, SmallActions, UserPreview } from '../../elements';
 import { Add, CogFilled, SignOut, SwitchArrowRight } from '../../icons';
 import type { ThemableCssProp } from '../../styledSystem';
+import type { MenuItem } from '../../utils/createCustomMenuItems';
 
 type SingleSessionActionsProps = {
   handleManageAccountClicked: () => Promise<unknown> | void;
   handleSignOutSessionClicked: (session: ActiveSessionResource) => () => Promise<unknown> | void;
   session: ActiveSessionResource;
+  completedCallback: () => void;
 };
 
 export const SingleSessionActions = (props: SingleSessionActionsProps) => {
+  const { navigate } = useRouter();
   const { handleManageAccountClicked, handleSignOutSessionClicked, session } = props;
+
+  const { customMenuItems } = useUserButtonContext();
+
+  const handleActionClick = async (route: MenuItem) => {
+    if (route?.external) {
+      await navigate(route.path);
+      return props?.completedCallback();
+    }
+    if (route.id === USER_BUTTON_ITEM_ID.MANAGE_ACCOUNT) {
+      return await handleManageAccountClicked();
+    }
+
+    route.onClick?.();
+    return props?.completedCallback();
+  };
 
   return (
     <Actions
@@ -27,41 +48,33 @@ export const SingleSessionActions = (props: SingleSessionActionsProps) => {
         borderTopColor: t.colors.$neutralAlpha100,
       })}
     >
-      <Action
-        elementDescriptor={descriptors.userButtonPopoverActionButton}
-        elementId={descriptors.userButtonPopoverActionButton.setId('manageAccount')}
-        iconBoxElementDescriptor={descriptors.userButtonPopoverActionButtonIconBox}
-        iconBoxElementId={descriptors.userButtonPopoverActionButtonIconBox.setId('manageAccount')}
-        iconElementDescriptor={descriptors.userButtonPopoverActionButtonIcon}
-        iconElementId={descriptors.userButtonPopoverActionButtonIcon.setId('manageAccount')}
-        icon={CogFilled}
-        label={localizationKeys('userButton.action__manageAccount')}
-        onClick={handleManageAccountClicked}
-        sx={t => ({
-          borderTopWidth: t.borderWidths.$normal,
-          borderTopStyle: t.borderStyles.$solid,
-          borderTopColor: t.colors.$neutralAlpha100,
-          padding: `${t.space.$4} ${t.space.$5}`,
-        })}
-      />
-      <Action
-        elementDescriptor={descriptors.userButtonPopoverActionButton}
-        elementId={descriptors.userButtonPopoverActionButton.setId('signOut')}
-        iconBoxElementDescriptor={descriptors.userButtonPopoverActionButtonIconBox}
-        iconBoxElementId={descriptors.userButtonPopoverActionButtonIconBox.setId('signOut')}
-        iconElementDescriptor={descriptors.userButtonPopoverActionButtonIcon}
-        iconElementId={descriptors.userButtonPopoverActionButtonIcon.setId('signOut')}
-        icon={SignOut}
-        label={localizationKeys('userButton.action__signOut')}
-        onClick={handleSignOutSessionClicked(session)}
-        sx={[
-          t => ({
-            borderBottomLeftRadius: t.radii.$lg,
-            borderBottomRightRadius: t.radii.$lg,
-            padding: `${t.space.$4} ${t.space.$5}`,
-          }),
-        ]}
-      />
+      {customMenuItems?.map((item: MenuItem) => {
+        return (
+          <Action
+            key={item.id}
+            elementDescriptor={descriptors.userButtonPopoverCustomActionButton}
+            elementId={descriptors.userButtonPopoverCustomActionButton.setId(item.id)}
+            iconBoxElementDescriptor={descriptors.userButtonPopoverCustomActionButtonIconBox}
+            iconBoxElementId={descriptors.userButtonPopoverCustomActionButtonIconBox.setId(item.id)}
+            iconElementDescriptor={descriptors.userButtonPopoverActionCustomButtonIcon}
+            iconElementId={descriptors.userButtonPopoverActionCustomButtonIcon.setId(item.id)}
+            icon={CogFilled} // TODO: Fix this
+            // icon={item.icon} // TODO: Fix this
+            label={item.name}
+            onClick={
+              item.id === USER_BUTTON_ITEM_ID.SIGN_OUT
+                ? handleSignOutSessionClicked(session)
+                : () => handleActionClick(item)
+            }
+            sx={t => ({
+              borderTopWidth: t.borderWidths.$normal,
+              borderTopStyle: t.borderStyles.$solid,
+              borderTopColor: t.colors.$neutralAlpha100,
+              padding: `${t.space.$4} ${t.space.$5}`,
+            })}
+          />
+        );
+      })}
     </Actions>
   );
 };

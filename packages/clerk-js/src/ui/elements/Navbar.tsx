@@ -89,24 +89,28 @@ export const NavBar = (props: NavBarProps) => {
         gap: t.space.$0x5,
       })}
     >
-      {routes.map(r => (
-        <NavButton
-          key={r.id}
-          elementDescriptor={descriptors.navbarButton}
-          elementId={descriptors.navbarButton.setId(r.id as any)}
-          iconElementDescriptor={descriptors.navbarButtonIcon}
-          iconElementId={descriptors.navbarButtonIcon.setId(r.id) as any}
-          onClick={handleNavigate(r)}
-          icon={r.icon}
-          isActive={checkIfActive(r)}
-          sx={t => ({
-            padding: `${t.space.$1x5} ${t.space.$3}`,
-            minHeight: t.space.$8,
-          })}
-        >
-          {t(r.name)}
-        </NavButton>
-      ))}
+      {routes.map(r => {
+        console.log('Navbar.tsx');
+        console.log(typeof r.icon, r.icon);
+        return (
+          <NavButton
+            key={r.id}
+            elementDescriptor={descriptors.navbarButton}
+            elementId={descriptors.navbarButton.setId(r.id as any)}
+            iconElementDescriptor={descriptors.navbarButtonIcon}
+            iconElementId={descriptors.navbarButtonIcon.setId(r.id) as any}
+            onClick={handleNavigate(r)}
+            icon={r.icon}
+            isActive={checkIfActive(r)}
+            sx={t => ({
+              padding: `${t.space.$1x5} ${t.space.$3}`,
+              minHeight: t.space.$8,
+            })}
+          >
+            {t(r.name)}
+          </NavButton>
+        );
+      })}
     </Col>
   );
 

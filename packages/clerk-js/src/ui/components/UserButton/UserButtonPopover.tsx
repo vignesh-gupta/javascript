@@ -48,6 +48,7 @@ export const UserButtonPopover = React.forwardRef<HTMLDivElement, UserButtonPopo
               handleManageAccountClicked={handleManageAccountClicked}
               handleSignOutSessionClicked={handleSignOutSessionClicked}
               session={session}
+              completedCallback={close}
             />
           ) : (
             <MultiSessionActions

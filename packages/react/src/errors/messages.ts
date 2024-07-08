@@ -41,3 +41,6 @@ export const noPathProvidedError = (componentName: string) =>
 
 export const incompatibleRoutingWithPathProvidedError = (componentName: string) =>
   `The \`path\` prop will only be respected when the Clerk component uses path-based routing. To resolve this error, pass \`routing='path'\` to the <${componentName}/> component, or drop the \`path\` prop to switch to hash-based routing. For more details please refer to our docs: https://clerk.com/docs`;
+
+export const customMenuItemsIgnoredComponent = (componentName: string) =>
+  `<${componentName} /> can only accept <${componentName}.Action /> and <${componentName}.Link /> as its children. Any other provided component will be ignored.`;

@@ -25,7 +25,11 @@ import type {
   UserProfileCtx,
 } from '../types';
 import type { CustomPageContent } from '../utils';
-import { createOrganizationProfileCustomPages, createUserProfileCustomPages } from '../utils';
+import {
+  createOrganizationProfileCustomPages,
+  createUserButtonCustomMenuItems,
+  createUserProfileCustomPages,
+} from '../utils';
 
 const populateParamFromObject = createDynamicParamParser({ regex: /:(\w+)/ });
 
@@ -270,6 +274,10 @@ export const useUserButtonContext = () => {
 
   const userProfileMode = !!ctx.userProfileUrl && !ctx.userProfileMode ? 'navigation' : ctx.userProfileMode;
 
+  const customMenuItems = useMemo(() => {
+    return createUserButtonCustomMenuItems(ctx.customMenuItems || [], clerk);
+  }, [ctx.customMenuItems]);
+
   return {
     ...ctx,
     componentName,
@@ -282,6 +290,7 @@ export const useUserButtonContext = () => {
     afterSignOutUrl,
     afterSwitchSessionUrl,
     userProfileMode: userProfileMode || 'modal',
+    customMenuItems: customMenuItems || [],
   };
 };
 
