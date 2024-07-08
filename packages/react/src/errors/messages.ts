@@ -44,3 +44,12 @@ export const incompatibleRoutingWithPathProvidedError = (componentName: string) 
 
 export const customMenuItemsIgnoredComponent = (componentName: string) =>
   `<${componentName} /> can only accept <${componentName}.Action /> and <${componentName}.Link /> as its children. Any other provided component will be ignored.`;
+
+export const userButtonMenuItemsRenderedError =
+  '<UserButton.MenuItems /> component needs to be a direct child of `<UserButton />`.';
+
+export const userButtonMenuActionRenderedError =
+  '<UserButton.Action /> component needs to be a direct child of `<UserButton.MenuItems />`.';
+
+export const userButtonMenuLinkRenderedError =
+  '<UserButton.Link /> component needs to be a direct child of `<UserButton.MenuItems />`.';

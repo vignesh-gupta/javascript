@@ -55,6 +55,7 @@ export interface MountProps {
   updateProps: (props: any) => void;
   props?: any;
   customPagesPortals?: any[];
+  customMenuItemsPortals?: any[];
 }
 
 export interface OpenProps {

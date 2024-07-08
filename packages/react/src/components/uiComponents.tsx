@@ -18,6 +18,9 @@ import React, { createElement } from 'react';
 import {
   organizationProfileLinkRenderedError,
   organizationProfilePageRenderedError,
+  userButtonMenuActionRenderedError,
+  userButtonMenuItemsRenderedError,
+  userButtonMenuLinkRenderedError,
   userProfileLinkRenderedError,
   userProfilePageRenderedError,
 } from '../errors/messages';
@@ -110,11 +113,12 @@ class Portal extends React.PureComponent<MountProps | OpenProps> {
     if (!isMountProps(_prevProps) || !isMountProps(this.props)) {
       return;
     }
+
     // Remove children and customPages from props before comparing
     // children might hold circular references which deepEqual can't handle
-    // and the implementation of customPages relies on props getting new references
-    const prevProps = without(_prevProps.props, 'customPages', 'children');
-    const newProps = without(this.props.props, 'customPages', 'children');
+    // and the implementation of customPages or customMenuItems relies on props getting new references
+    const prevProps = without(_prevProps.props, 'customPages', 'customMenuItems', 'children');
+    const newProps = without(this.props.props, 'customPages', 'customMenuItems', 'children');
     // instead, we simply use the length of customPages to determine if it changed or not
     const customPagesChanged = prevProps.customPages?.length !== newProps.customPages?.length;
     if (!isDeeplyEqual(prevProps, newProps) || customPagesChanged) {
@@ -213,7 +217,7 @@ const _UserButton = withClerk(
   ({ clerk, ...props }: WithClerkProp<PropsWithChildren<UserButtonPropsWithoutCustomPages>>) => {
     const { customPages, customPagesPortals } = useUserProfileCustomPages(props.children);
     const userProfileProps = Object.assign(props.userProfileProps || {}, { customPages });
-    const { customMenuItems } = useUserButtonCustomMenuItems(props.children);
+    const { customMenuItems, customMenuItemsPortals } = useUserButtonCustomMenuItems(props.children);
 
     return (
       <Portal
@@ -222,6 +226,7 @@ const _UserButton = withClerk(
         updateProps={(clerk as any).__unstable__updateProps}
         props={{ ...props, userProfileProps, customMenuItems }}
         customPagesPortals={customPagesPortals}
+        customMenuItemsPortals={customMenuItemsPortals}
       />
     );
   },
@@ -229,14 +234,17 @@ const _UserButton = withClerk(
 );
 
 export function MenuItems({ children }: PropsWithChildren) {
+  logErrorInDevMode(userButtonMenuItemsRenderedError);
   return <>{children}</>;
 }
 
 export function MenuAction({ children }: PropsWithChildren<UserButtonActionProps>) {
+  logErrorInDevMode(userButtonMenuActionRenderedError);
   return <>{children}</>;
 }
 
 export function MenuLink({ children }: PropsWithChildren<UserButtonLinkProps>) {
+  logErrorInDevMode(userButtonMenuLinkRenderedError);
   return <>{children}</>;
 }
 

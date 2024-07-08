@@ -43,6 +43,7 @@ const useCustomMenuItems = ({
 }: UseCustomMenuItemsParams) => {
   const validChildren: CustomMenuItemType[] = [];
   const customMenuItems: CustomMenuItem[] = [];
+  const customMenuItemsPortals: React.ComponentType[] = [];
 
   React.Children.forEach(children, child => {
     if (
@@ -116,30 +117,36 @@ const useCustomMenuItems = ({
       });
     }
     if (isCustomMenuItem(mi)) {
-      const { mount: mountIcon, unmount: unmountIcon } = customMenuItemLabelIconsPortals.find(
-        p => p.id === index,
-      ) as UseCustomElementPortalReturn;
+      const {
+        portal: iconPortal,
+        mount: mountIcon,
+        unmount: unmountIcon,
+      } = customMenuItemLabelIconsPortals.find(p => p.id === index) as UseCustomElementPortalReturn;
       customMenuItems.push({
         label: mi.label,
         onClick: mi.onClick,
         mountIcon,
         unmountIcon,
       });
+      customMenuItemsPortals.push(iconPortal);
     }
     if (isExternalLink(mi)) {
-      const { mount: mountIcon, unmount: unmountIcon } = customLinkLabelIconsPortals.find(
-        p => p.id === index,
-      ) as UseCustomElementPortalReturn;
+      const {
+        portal: iconPortal,
+        mount: mountIcon,
+        unmount: unmountIcon,
+      } = customLinkLabelIconsPortals.find(p => p.id === index) as UseCustomElementPortalReturn;
       customMenuItems.push({
         label: mi.label,
         href: mi.href,
         mountIcon,
         unmountIcon,
       });
+      customMenuItemsPortals.push(iconPortal);
     }
   });
 
-  return { customMenuItems };
+  return { customMenuItems, customMenuItemsPortals };
 };
 
 const isReorderItem = (childProps: any, validItems: string[]): boolean => {

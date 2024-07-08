@@ -24,6 +24,8 @@ export const SingleSessionActions = (props: SingleSessionActionsProps) => {
 
   const { customMenuItems } = useUserButtonContext();
 
+  console.log({ customMenuItems });
+
   const handleActionClick = async (route: MenuItem) => {
     if (route?.external) {
       await navigate(route.path);
