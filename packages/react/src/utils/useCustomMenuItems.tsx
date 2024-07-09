@@ -110,6 +110,7 @@ const useCustomMenuItems = ({
 
   const customMenuItemLabelIconsPortals = useCustomElementPortal(customMenuItemLabelIcons);
   const customLinkLabelIconsPortals = useCustomElementPortal(customLinkLabelIcons);
+
   validChildren.forEach((mi, index) => {
     if (isReorderItem(mi, reorderItemsLabels)) {
       customMenuItems.push({

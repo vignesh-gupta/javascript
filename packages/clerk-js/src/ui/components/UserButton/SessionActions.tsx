@@ -60,8 +60,7 @@ export const SingleSessionActions = (props: SingleSessionActionsProps) => {
             iconBoxElementId={descriptors.userButtonPopoverCustomActionButtonIconBox.setId(item.id)}
             iconElementDescriptor={descriptors.userButtonPopoverActionCustomButtonIcon}
             iconElementId={descriptors.userButtonPopoverActionCustomButtonIcon.setId(item.id)}
-            icon={CogFilled} // TODO: Fix this
-            // icon={item.icon} // TODO: Fix this
+            icon={item.icon}
             label={item.name}
             onClick={
               item.id === USER_BUTTON_ITEM_ID.SIGN_OUT

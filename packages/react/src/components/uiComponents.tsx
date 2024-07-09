@@ -121,7 +121,8 @@ class Portal extends React.PureComponent<MountProps | OpenProps> {
     const newProps = without(this.props.props, 'customPages', 'customMenuItems', 'children');
     // instead, we simply use the length of customPages to determine if it changed or not
     const customPagesChanged = prevProps.customPages?.length !== newProps.customPages?.length;
-    if (!isDeeplyEqual(prevProps, newProps) || customPagesChanged) {
+    const customMenuItemsChanged = prevProps.customMenuItems?.length !== newProps.customMenuItems?.length;
+    if (!isDeeplyEqual(prevProps, newProps) || customPagesChanged || customMenuItemsChanged) {
       this.props.updateProps({ node: this.portalRef.current, props: this.props.props });
     }
   }
@@ -155,6 +156,8 @@ class Portal extends React.PureComponent<MountProps | OpenProps> {
         <div ref={this.portalRef} />
         {isMountProps(this.props) &&
           this.props?.customPagesPortals?.map((portal, index) => createElement(portal, { key: index }))}
+        {isMountProps(this.props) &&
+          this.props?.customMenuItemsPortals?.map((portal, index) => createElement(portal, { key: index }))}
       </>
     );
   }
