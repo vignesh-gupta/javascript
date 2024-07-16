@@ -1,8 +1,15 @@
+import { logErrorInDevMode } from '@clerk/shared';
 import type { CustomMenuItem } from '@clerk/types';
 import type { ReactElement } from 'react';
 import React from 'react';
 
 import { MenuAction, MenuItems, MenuLink, UserProfileLink, UserProfilePage } from '../components/uiComponents';
+import {
+  customMenuItemsIgnoredComponent,
+  userButtonIgnoredComponent,
+  userButtonMenuItemLinkWrongProps,
+  userButtonMenuItemsActionWrongsProps,
+} from '../errors/messages';
 import type { UserButtonActionProps, UserButtonLinkProps } from '../types';
 import type { UseCustomElementPortalParams, UseCustomElementPortalReturn } from './useCustomElementPortal';
 import { useCustomElementPortal } from './useCustomElementPortal';
@@ -40,6 +47,7 @@ const useCustomMenuItems = ({
   MenuActionComponent,
   MenuLinkComponent,
   reorderItemsLabels,
+  componentName,
 }: UseCustomMenuItemsParams) => {
   const validChildren: CustomMenuItemType[] = [];
   const customMenuItems: CustomMenuItem[] = [];
@@ -53,7 +61,7 @@ const useCustomMenuItems = ({
       !isThatComponent(child, typeof UserProfilePage)
     ) {
       if (child) {
-        // logErrorInDevMode(customMenuItemsIgnoredComponent(componentName));
+        logErrorInDevMode(userButtonIgnoredComponent(componentName));
       }
       return;
     }
@@ -64,7 +72,7 @@ const useCustomMenuItems = ({
     React.Children.forEach(props.children, child => {
       if (!isThatComponent(child, MenuActionComponent) && !isThatComponent(child, MenuLinkComponent)) {
         if (child) {
-          // logErrorInDevMode(customMenuItemsIgnoredComponent(componentName));
+          logErrorInDevMode(customMenuItemsIgnoredComponent);
         }
 
         return;
@@ -81,7 +89,7 @@ const useCustomMenuItems = ({
         } else if (isCustomMenuItem(props)) {
           validChildren.push({ label, labelIcon, onClick });
         } else {
-          // TODO: logErrorInDevMode
+          logErrorInDevMode(userButtonMenuItemsActionWrongsProps);
           return;
         }
       }
@@ -90,7 +98,7 @@ const useCustomMenuItems = ({
         if (isExternalLink(props)) {
           validChildren.push({ label, labelIcon, href });
         } else {
-          // TODO: logErrorInDevMode
+          logErrorInDevMode(userButtonMenuItemLinkWrongProps);
           return;
         }
       }
