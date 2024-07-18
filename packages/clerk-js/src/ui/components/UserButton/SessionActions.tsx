@@ -87,9 +87,11 @@ type MultiSessionActionsProps = {
   handleAddAccountClicked: () => Promise<unknown> | void;
   session: ActiveSessionResource;
   otherSessions: ActiveSessionResource[];
+  completedCallback: () => void;
 };
 
 export const MultiSessionActions = (props: MultiSessionActionsProps) => {
+  const { navigate } = useRouter();
   const {
     handleManageAccountClicked,
     handleSignOutSessionClicked,
@@ -99,41 +101,95 @@ export const MultiSessionActions = (props: MultiSessionActionsProps) => {
     otherSessions,
   } = props;
 
+  const { customMenuItems } = useUserButtonContext();
+
+  const handleActionClick = async (route: MenuItem) => {
+    if (route?.external) {
+      await navigate(route.path);
+      return props?.completedCallback();
+    }
+    if (route.id === USER_BUTTON_ITEM_ID.MANAGE_ACCOUNT) {
+      return await handleManageAccountClicked();
+    }
+
+    route.onClick?.();
+    return props?.completedCallback();
+  };
+
   return (
     <>
-      <SmallActions
-        role='menu'
-        elementDescriptor={descriptors.userButtonPopoverActions}
-        elementId={descriptors.userButtonPopoverActions.setId('multiSession')}
-      >
-        <Flex
-          justify='between'
-          sx={t => ({ marginLeft: t.space.$12, padding: `0 ${t.space.$5} ${t.space.$4}`, gap: t.space.$2 })}
+      {customMenuItems.length == 2 ? (
+        <SmallActions
+          role='menu'
+          elementDescriptor={descriptors.userButtonPopoverActions}
+          elementId={descriptors.userButtonPopoverActions.setId('multiSession')}
         >
-          <SmallAction
-            elementDescriptor={descriptors.userButtonPopoverActionButton}
-            elementId={descriptors.userButtonPopoverActionButton.setId('manageAccount')}
-            iconBoxElementDescriptor={descriptors.userButtonPopoverActionButtonIconBox}
-            iconBoxElementId={descriptors.userButtonPopoverActionButtonIconBox.setId('manageAccount')}
-            iconElementDescriptor={descriptors.userButtonPopoverActionButtonIcon}
-            iconElementId={descriptors.userButtonPopoverActionButtonIcon.setId('manageAccount')}
-            icon={CogFilled}
-            label={localizationKeys('userButton.action__manageAccount')}
-            onClick={handleManageAccountClicked}
-          />
-          <SmallAction
-            elementDescriptor={descriptors.userButtonPopoverActionButton}
-            elementId={descriptors.userButtonPopoverActionButton.setId('signOut')}
-            iconBoxElementDescriptor={descriptors.userButtonPopoverActionButtonIconBox}
-            iconBoxElementId={descriptors.userButtonPopoverActionButtonIconBox.setId('signOut')}
-            iconElementDescriptor={descriptors.userButtonPopoverActionButtonIcon}
-            iconElementId={descriptors.userButtonPopoverActionButtonIcon.setId('signOut')}
-            icon={SignOut}
-            label={localizationKeys('userButton.action__signOut')}
-            onClick={handleSignOutSessionClicked(session)}
-          />
-        </Flex>
-      </SmallActions>
+          <Flex
+            justify='between'
+            sx={t => ({ marginLeft: t.space.$12, padding: `0 ${t.space.$5} ${t.space.$4}`, gap: t.space.$2 })}
+          >
+            <SmallAction
+              elementDescriptor={descriptors.userButtonPopoverActionButton}
+              elementId={descriptors.userButtonPopoverActionButton.setId('manageAccount')}
+              iconBoxElementDescriptor={descriptors.userButtonPopoverActionButtonIconBox}
+              iconBoxElementId={descriptors.userButtonPopoverActionButtonIconBox.setId('manageAccount')}
+              iconElementDescriptor={descriptors.userButtonPopoverActionButtonIcon}
+              iconElementId={descriptors.userButtonPopoverActionButtonIcon.setId('manageAccount')}
+              icon={CogFilled}
+              label={localizationKeys('userButton.action__manageAccount')}
+              onClick={handleManageAccountClicked}
+            />
+            <SmallAction
+              elementDescriptor={descriptors.userButtonPopoverActionButton}
+              elementId={descriptors.userButtonPopoverActionButton.setId('signOut')}
+              iconBoxElementDescriptor={descriptors.userButtonPopoverActionButtonIconBox}
+              iconBoxElementId={descriptors.userButtonPopoverActionButtonIconBox.setId('signOut')}
+              iconElementDescriptor={descriptors.userButtonPopoverActionButtonIcon}
+              iconElementId={descriptors.userButtonPopoverActionButtonIcon.setId('signOut')}
+              icon={SignOut}
+              label={localizationKeys('userButton.action__signOut')}
+              onClick={handleSignOutSessionClicked(session)}
+            />
+          </Flex>
+        </SmallActions>
+      ) : (
+        <SmallActions
+          role='menu'
+          elementDescriptor={descriptors.userButtonPopoverActions}
+          elementId={descriptors.userButtonPopoverActions.setId('multiSession')}
+          sx={t => ({
+            padding: `0 ${t.space.$5} ${t.space.$2} ${t.space.$5}`,
+            gap: t.space.$1,
+          })}
+        >
+          {customMenuItems?.map((item: MenuItem) => {
+            return (
+              <Action
+                key={item.id}
+                elementDescriptor={descriptors.userButtonPopoverCustomActionButton}
+                elementId={descriptors.userButtonPopoverCustomActionButton.setId(item.id)}
+                iconBoxElementDescriptor={descriptors.userButtonPopoverCustomActionButtonIconBox}
+                iconBoxElementId={descriptors.userButtonPopoverCustomActionButtonIconBox.setId(item.id)}
+                iconElementDescriptor={descriptors.userButtonPopoverActionCustomButtonIcon}
+                iconElementId={descriptors.userButtonPopoverActionCustomButtonIcon.setId(item.id)}
+                icon={item.icon}
+                label={item.name}
+                onClick={
+                  item.id === USER_BUTTON_ITEM_ID.SIGN_OUT
+                    ? handleSignOutSessionClicked(session)
+                    : () => handleActionClick(item)
+                }
+                sx={t => ({
+                  border: 0,
+                  padding: `${t.space.$2} ${t.space.$1}`,
+                  gap: t.space.$2x5,
+                })}
+              />
+            );
+          })}
+        </SmallActions>
+      )}
+
       <Actions
         role='menu'
         sx={t => ({

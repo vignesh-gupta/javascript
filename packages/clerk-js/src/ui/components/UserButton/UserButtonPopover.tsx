@@ -58,6 +58,7 @@ export const UserButtonPopover = React.forwardRef<HTMLDivElement, UserButtonPopo
               handleSignOutSessionClicked={handleSignOutSessionClicked}
               handleSessionClicked={handleSessionClicked}
               handleAddAccountClicked={handleAddAccountClicked}
+              completedCallback={close}
             />
           )}
         </PopoverCard.Content>
