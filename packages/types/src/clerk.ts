@@ -919,6 +919,9 @@ export type UserButtonProps = UserButtonProfileMode & {
    */
   userProfileProps?: Pick<UserProfileProps, 'additionalOAuthScopes' | 'appearance' | 'customPages'>;
 
+  /*
+   * Provide custom menu actions and links to be rendered inside the UserButton.
+   */
   customMenuItems?: CustomMenuItem[];
 };
 
