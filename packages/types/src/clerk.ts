@@ -1002,6 +1002,11 @@ export type OrganizationSwitcherProps = CreateOrganizationMode &
      * e.g. <UserButton userProfileProps={{appearance: {...}}} />
      */
     organizationProfileProps?: Pick<OrganizationProfileProps, 'appearance' | 'customPages'>;
+
+    /*
+     * Provide custom menu actions and links to be rendered inside the OrganizationSwitcher.
+     */
+    customMenuItems?: CustomMenuItem[];
   };
 
 export type OrganizationListProps = {

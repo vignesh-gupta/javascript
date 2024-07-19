@@ -246,9 +246,9 @@ export type ElementsConfig = {
   userButtonPopoverActionButton: WithOptions<'manageAccount' | 'addAccount' | 'signOut' | 'signOutAll'>;
   userButtonPopoverActionButtonIconBox: WithOptions<'manageAccount' | 'addAccount' | 'signOut' | 'signOutAll'>;
   userButtonPopoverActionButtonIcon: WithOptions<'manageAccount' | 'addAccount' | 'signOut' | 'signOutAll'>;
-  userButtonPopoverCustomActionButton: WithOptions<string>;
-  userButtonPopoverCustomActionButtonIconBox: WithOptions<string>;
-  userButtonPopoverActionCustomButtonIcon: WithOptions<string>;
+  userButtonPopoverCustomItemButton: WithOptions<string>;
+  userButtonPopoverCustomItemButtonIconBox: WithOptions<string>;
+  userButtonPopoverActionItemButtonIcon: WithOptions<string>;
   userButtonPopoverFooter: WithOptions;
   userButtonPopoverFooterPagesLink: WithOptions<'terms' | 'privacy'>;
 
@@ -263,10 +263,13 @@ export type ElementsConfig = {
   organizationSwitcherPopoverActionButton: WithOptions<
     'manageOrganization' | 'createOrganization' | 'switchOrganization'
   >;
+  organizationSwitcherPopoverCustomItem: WithOptions<string>;
   organizationSwitcherPreviewButton: WithOptions;
   organizationSwitcherInvitationAcceptButton: WithOptions;
   organizationSwitcherPopoverActionButtonIconBox: WithOptions<'manageOrganization' | 'createOrganization'>;
   organizationSwitcherPopoverActionButtonIcon: WithOptions<'manageOrganization' | 'createOrganization'>;
+  organizationSwitcherPopoverCustomItemIconBox: WithOptions<string>;
+  organizationSwitcherPopoverCustomItemIcon: WithOptions<string>;
   organizationSwitcherPopoverFooter: WithOptions;
 
   organizationListPreviewItems: WithOptions;

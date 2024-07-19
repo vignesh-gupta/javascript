@@ -12,3 +12,7 @@ export const USER_BUTTON_ITEM_ID = {
   MANAGE_ACCOUNT: 'manageAccount',
   SIGN_OUT: 'signOut',
 };
+
+export const ORGANIZATION_SWITCHER_ITEM_ID = {
+  CREATE_ORGANIZATION: 'createOrganization',
+};

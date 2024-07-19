@@ -30,6 +30,18 @@ export const useUserButtonCustomMenuItems = (children: React.ReactNode | React.R
   });
 };
 
+export const useOrganizationSwitcherCustomMenuItems = (children: React.ReactNode | React.ReactNode[]) => {
+  const reorderItemsLabels = ['createOrganization'];
+  return useCustomMenuItems({
+    children,
+    reorderItemsLabels,
+    MenuItemsComponent: MenuItems,
+    MenuActionComponent: MenuAction,
+    MenuLinkComponent: MenuLink,
+    componentName: 'OrganizationSwitcher',
+  });
+};
+
 type UseCustomMenuItemsParams = {
   children: React.ReactNode | React.ReactNode[];
   MenuItemsComponent?: any;
@@ -154,6 +166,8 @@ const useCustomMenuItems = ({
       customMenuItemsPortals.push(iconPortal);
     }
   });
+
+  console.log({ customMenuItems, customMenuItemsPortals });
 
   return { customMenuItems, customMenuItemsPortals };
 };

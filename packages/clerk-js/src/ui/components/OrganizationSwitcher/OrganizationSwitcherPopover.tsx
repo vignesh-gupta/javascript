@@ -49,7 +49,10 @@ export const OrganizationSwitcherPopover = React.forwardRef<HTMLDivElement, Orga
       navigateAfterSelectOrganization,
       organizationProfileProps,
       skipInvitationScreen,
+      customMenuItems,
     } = useOrganizationSwitcherContext();
+
+    console.log({ customMenuItems });
 
     const { user } = useUser();
 
@@ -227,6 +230,8 @@ export const OrganizationSwitcherPopover = React.forwardRef<HTMLDivElement, Orga
                 onCreateOrganizationClick={handleCreateOrganizationClicked}
                 onPersonalWorkspaceClick={handlePersonalWorkspaceClicked}
                 onOrganizationClick={handleOrganizationClicked}
+                menuItems={customMenuItems}
+                completedCallback={close}
               />
             </Actions>
           </PopoverCard.Content>

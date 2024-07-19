@@ -9,7 +9,7 @@ import { descriptors, Flex, localizationKeys } from '../../customizables';
 import { Action, Actions, PreviewButton, SmallAction, SmallActions, UserPreview } from '../../elements';
 import { Add, CogFilled, SignOut, SwitchArrowRight } from '../../icons';
 import type { ThemableCssProp } from '../../styledSystem';
-import type { MenuItem } from '../../utils/createCustomMenuItems';
+import type { DefaultItemIds, MenuItem } from '../../utils/createCustomMenuItems';
 
 type SingleSessionActionsProps = {
   handleManageAccountClicked: () => Promise<unknown> | void;
@@ -24,7 +24,12 @@ export const SingleSessionActions = (props: SingleSessionActionsProps) => {
 
   const { customMenuItems } = useUserButtonContext();
 
-  console.log({ customMenuItems });
+  const commonActionSx: ThemableCssProp = t => ({
+    borderTopWidth: t.borderWidths.$normal,
+    borderTopStyle: t.borderStyles.$solid,
+    borderTopColor: t.colors.$neutralAlpha100,
+    padding: `${t.space.$4} ${t.space.$5}`,
+  });
 
   const handleActionClick = async (route: MenuItem) => {
     if (route?.external) {
@@ -51,30 +56,46 @@ export const SingleSessionActions = (props: SingleSessionActionsProps) => {
       })}
     >
       {customMenuItems?.map((item: MenuItem) => {
-        return (
-          <Action
-            key={item.id}
-            elementDescriptor={descriptors.userButtonPopoverCustomActionButton}
-            elementId={descriptors.userButtonPopoverCustomActionButton.setId(item.id)}
-            iconBoxElementDescriptor={descriptors.userButtonPopoverCustomActionButtonIconBox}
-            iconBoxElementId={descriptors.userButtonPopoverCustomActionButtonIconBox.setId(item.id)}
-            iconElementDescriptor={descriptors.userButtonPopoverActionCustomButtonIcon}
-            iconElementId={descriptors.userButtonPopoverActionCustomButtonIcon.setId(item.id)}
-            icon={item.icon}
-            label={item.name}
-            onClick={
-              item.id === USER_BUTTON_ITEM_ID.SIGN_OUT
-                ? handleSignOutSessionClicked(session)
-                : () => handleActionClick(item)
-            }
-            sx={t => ({
-              borderTopWidth: t.borderWidths.$normal,
-              borderTopStyle: t.borderStyles.$solid,
-              borderTopColor: t.colors.$neutralAlpha100,
-              padding: `${t.space.$4} ${t.space.$5}`,
-            })}
-          />
-        );
+        const isDefaultItem = Object.values(USER_BUTTON_ITEM_ID).includes(item.id);
+
+        // We are doing this in order to avoid not break the descriptors
+        if (isDefaultItem) {
+          return (
+            <Action
+              key={item.id}
+              elementDescriptor={descriptors.userButtonPopoverActionButton}
+              elementId={descriptors.userButtonPopoverActionButton.setId(item.id as DefaultItemIds)}
+              iconBoxElementDescriptor={descriptors.userButtonPopoverActionButtonIconBox}
+              iconBoxElementId={descriptors.userButtonPopoverActionButtonIconBox.setId(item.id as DefaultItemIds)}
+              iconElementDescriptor={descriptors.userButtonPopoverActionButtonIcon}
+              iconElementId={descriptors.userButtonPopoverActionButtonIcon.setId(item.id as DefaultItemIds)}
+              icon={item.icon}
+              label={item.name}
+              onClick={
+                item.id === USER_BUTTON_ITEM_ID.SIGN_OUT
+                  ? handleSignOutSessionClicked(session)
+                  : () => handleActionClick(item)
+              }
+              sx={{ ...commonActionSx }}
+            />
+          );
+        } else {
+          return (
+            <Action
+              key={item.id}
+              elementDescriptor={descriptors.userButtonPopoverCustomItemButton}
+              elementId={descriptors.userButtonPopoverCustomItemButton.setId(item.id)}
+              iconBoxElementDescriptor={descriptors.userButtonPopoverCustomItemButtonIconBox}
+              iconBoxElementId={descriptors.userButtonPopoverCustomItemButtonIconBox.setId(item.id)}
+              iconElementDescriptor={descriptors.userButtonPopoverActionItemButtonIcon}
+              iconElementId={descriptors.userButtonPopoverActionItemButtonIcon.setId(item.id)}
+              icon={item.icon}
+              label={item.name}
+              onClick={() => handleActionClick(item)}
+              sx={{ ...commonActionSx }}
+            />
+          );
+        }
       })}
     </Actions>
   );
@@ -166,12 +187,12 @@ export const MultiSessionActions = (props: MultiSessionActionsProps) => {
             return (
               <Action
                 key={item.id}
-                elementDescriptor={descriptors.userButtonPopoverCustomActionButton}
-                elementId={descriptors.userButtonPopoverCustomActionButton.setId(item.id)}
-                iconBoxElementDescriptor={descriptors.userButtonPopoverCustomActionButtonIconBox}
-                iconBoxElementId={descriptors.userButtonPopoverCustomActionButtonIconBox.setId(item.id)}
-                iconElementDescriptor={descriptors.userButtonPopoverActionCustomButtonIcon}
-                iconElementId={descriptors.userButtonPopoverActionCustomButtonIcon.setId(item.id)}
+                elementDescriptor={descriptors.userButtonPopoverCustomItemButton}
+                elementId={descriptors.userButtonPopoverCustomItemButton.setId(item.id)}
+                iconBoxElementDescriptor={descriptors.userButtonPopoverCustomItemButtonIconBox}
+                iconBoxElementId={descriptors.userButtonPopoverCustomItemButtonIconBox.setId(item.id)}
+                iconElementDescriptor={descriptors.userButtonPopoverActionItemButtonIcon}
+                iconElementId={descriptors.userButtonPopoverActionItemButtonIcon.setId(item.id)}
                 icon={item.icon}
                 label={item.name}
                 onClick={

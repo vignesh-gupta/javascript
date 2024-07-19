@@ -27,6 +27,7 @@ import type {
 import type { CustomPageContent } from '../utils';
 import {
   createOrganizationProfileCustomPages,
+  createOrganizationSwitcherCustomMenuItems,
   createUserButtonCustomMenuItems,
   createUserProfileCustomPages,
 } from '../utils';
@@ -296,6 +297,7 @@ export const useUserButtonContext = () => {
 
 export const useOrganizationSwitcherContext = () => {
   const { componentName, ...ctx } = (React.useContext(ComponentContext) || {}) as OrganizationSwitcherCtx;
+  const clerk = useClerk();
   const { navigate } = useRouter();
   const { displayConfig } = useEnvironment();
 
@@ -355,6 +357,10 @@ export const useOrganizationSwitcherContext = () => {
   const createOrganizationMode =
     !!ctx.createOrganizationUrl && !ctx.createOrganizationMode ? 'navigation' : ctx.createOrganizationMode;
 
+  const customMenuItems = useMemo(() => {
+    return createOrganizationSwitcherCustomMenuItems(ctx.customMenuItems || [], clerk);
+  }, [ctx.customMenuItems]);
+
   return {
     ...ctx,
     hidePersonal: ctx.hidePersonal || false,
@@ -368,6 +374,7 @@ export const useOrganizationSwitcherContext = () => {
     navigateAfterSelectOrganization,
     navigateAfterSelectPersonal,
     componentName,
+    customMenuItems: customMenuItems || [],
   };
 };
 

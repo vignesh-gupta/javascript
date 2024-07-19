@@ -35,7 +35,12 @@ import type {
   UserProfilePageProps,
   WithClerkProp,
 } from '../types';
-import { useOrganizationProfileCustomPages, useUserButtonCustomMenuItems, useUserProfileCustomPages } from '../utils';
+import {
+  useOrganizationProfileCustomPages,
+  useOrganizationSwitcherCustomMenuItems,
+  useUserButtonCustomMenuItems,
+  useUserProfileCustomPages,
+} from '../utils';
 import { withClerk } from './withClerk';
 
 type UserProfileExportType = typeof _UserProfile & {
@@ -63,6 +68,9 @@ type OrganizationProfileExportType = typeof _OrganizationProfile & {
 type OrganizationSwitcherExportType = typeof _OrganizationSwitcher & {
   OrganizationProfilePage: typeof OrganizationProfilePage;
   OrganizationProfileLink: typeof OrganizationProfileLink;
+  MenuItems: typeof MenuItems;
+  Action: typeof MenuAction;
+  Link: typeof MenuLink;
 };
 
 type OrganizationSwitcherPropsWithoutCustomPages = Without<OrganizationSwitcherProps, 'organizationProfileProps'> & {
@@ -305,13 +313,18 @@ const _OrganizationSwitcher = withClerk(
   ({ clerk, ...props }: WithClerkProp<PropsWithChildren<OrganizationSwitcherPropsWithoutCustomPages>>) => {
     const { customPages, customPagesPortals } = useOrganizationProfileCustomPages(props.children);
     const organizationProfileProps = Object.assign(props.organizationProfileProps || {}, { customPages });
+    const { customMenuItems, customMenuItemsPortals } = useOrganizationSwitcherCustomMenuItems(props.children);
+
+    console.log(customMenuItems);
+
     return (
       <Portal
         mount={clerk.mountOrganizationSwitcher}
         unmount={clerk.unmountOrganizationSwitcher}
         updateProps={(clerk as any).__unstable__updateProps}
-        props={{ ...props, organizationProfileProps }}
+        props={{ ...props, organizationProfileProps, customMenuItems }}
         customPagesPortals={customPagesPortals}
+        customMenuItemsPortals={customMenuItemsPortals}
       />
     );
   },
@@ -321,6 +334,9 @@ const _OrganizationSwitcher = withClerk(
 export const OrganizationSwitcher: OrganizationSwitcherExportType = Object.assign(_OrganizationSwitcher, {
   OrganizationProfilePage,
   OrganizationProfileLink,
+  MenuItems,
+  Action: MenuAction,
+  Link: MenuLink,
 });
 
 export const OrganizationList = withClerk(({ clerk, ...props }: WithClerkProp<OrganizationListProps>) => {

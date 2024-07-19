@@ -1,22 +1,24 @@
 import type { CustomMenuItem, LoadedClerk } from '@clerk/types';
 
 import { isValidUrl } from '../../utils';
-import { USER_BUTTON_ITEM_ID } from '../constants';
+import { ORGANIZATION_SWITCHER_ITEM_ID, USER_BUTTON_ITEM_ID } from '../constants';
 import type { LocalizationKey } from '../customizables';
-import { CogFilled, SignOut } from '../icons';
+import { Add, CogFilled, SignOut } from '../icons';
 import { localizationKeys } from '../localization';
 import { ExternalElementMounter } from './ExternalElementMounter';
 import { isDevelopmentSDK } from './runtimeEnvironment';
 
+export type DefaultItemIds = 'manageAccount' | 'addAccount' | 'signOut' | 'signOutAll';
+
 export type MenuItem = {
-  name: LocalizationKey | string;
   id: string;
+  name: LocalizationKey | string;
   icon: React.ComponentType;
   onClick?: () => void;
-} & ({ external: true; path: string } | { external?: false; path?: string });
+} & ({ external: true; path: string } | { id: string; external?: false; path?: string });
 
-type UserButtonReorderItem = {
-  label: 'manageAccount' | 'signOut';
+type MenuReorderItem = {
+  label: 'manageAccount' | 'signOut' | 'createOrganization';
 };
 
 type CustomMenuAction = {
@@ -35,12 +37,27 @@ type CustomMenuLink = {
   unmountIcon: (el?: HTMLDivElement) => void;
 };
 
-export const createUserButtonCustomMenuItems = (customMenuItems: CustomMenuItem[], clerk: LoadedClerk) => {
-  return createCustomMenuItems({ customMenuItems }, clerk);
+type CreateCustomMenuItemsParams = {
+  customMenuItems: CustomMenuItem[];
+  getDefaultMenuItems: () => { INITIAL_MENU_ITEMS: MenuItem[]; validReorderItemLabels: string[] };
 };
 
-const createCustomMenuItems = ({ customMenuItems }: { customMenuItems: CustomMenuItem[] }, clerk: LoadedClerk) => {
-  const { INITIAL_MENU_ITEMS, validReorderItemLabels } = getUserButtonDefaultMenuItems();
+export const createUserButtonCustomMenuItems = (customMenuItems: CustomMenuItem[], clerk: LoadedClerk) => {
+  return createCustomMenuItems({ customMenuItems, getDefaultMenuItems: getUserButtonDefaultMenuItems }, clerk);
+};
+
+export const createOrganizationSwitcherCustomMenuItems = (customMenuItems: CustomMenuItem[], clerk: LoadedClerk) => {
+  return createCustomMenuItems(
+    { customMenuItems, getDefaultMenuItems: getOrganizationSwitcherDefaultMenuItems },
+    clerk,
+  );
+};
+
+const createCustomMenuItems = (
+  { customMenuItems, getDefaultMenuItems }: CreateCustomMenuItemsParams,
+  clerk: LoadedClerk,
+) => {
+  const { INITIAL_MENU_ITEMS, validReorderItemLabels } = getDefaultMenuItems();
 
   if (isDevelopmentSDK(clerk)) {
     checkForDuplicateUsageOfReorderingItems(customMenuItems, validReorderItemLabels);
@@ -100,14 +117,18 @@ const getMenuItems = ({
 
   const allItems = [...items, ...remainingDefaultItems];
 
-  const hasCustomManageAccount = customMenuItems.some(item => item.label === USER_BUTTON_ITEM_ID.MANAGE_ACCOUNT);
-  // Ensure that the "Manage Account" item is always at the top of the list if it's not included in the custom items
-  if (!hasCustomManageAccount) {
+  const hasReorderedManageAccountOrCreateOrg = customMenuItems.some(
+    item =>
+      item.label === USER_BUTTON_ITEM_ID.MANAGE_ACCOUNT ||
+      item.label === ORGANIZATION_SWITCHER_ITEM_ID.CREATE_ORGANIZATION,
+  );
+  // Ensure that the "Manage account" and "Create organization" item is always at the top of the list if it's not included in the custom items
+  if (!hasReorderedManageAccountOrCreateOrg) {
     allItems.sort((a, b) => {
-      if (a.id === 'manageAccount') {
+      if (a.id === USER_BUTTON_ITEM_ID.MANAGE_ACCOUNT || a.id === ORGANIZATION_SWITCHER_ITEM_ID.CREATE_ORGANIZATION) {
         return -1;
       }
-      if (b.id === 'manageAccount') {
+      if (b.id === USER_BUTTON_ITEM_ID.MANAGE_ACCOUNT || b.id === ORGANIZATION_SWITCHER_ITEM_ID.CREATE_ORGANIZATION) {
         return 1;
       }
       return 0;
@@ -121,13 +142,27 @@ const getUserButtonDefaultMenuItems = () => {
   const INITIAL_MENU_ITEMS = [
     {
       name: localizationKeys('userButton.action__manageAccount'),
-      id: USER_BUTTON_ITEM_ID.MANAGE_ACCOUNT,
-      icon: CogFilled,
+      id: USER_BUTTON_ITEM_ID.MANAGE_ACCOUNT as 'manageAccount',
+      icon: CogFilled as React.ComponentType,
     },
     {
       name: localizationKeys('userButton.action__signOut'),
-      id: USER_BUTTON_ITEM_ID.SIGN_OUT,
-      icon: SignOut,
+      id: USER_BUTTON_ITEM_ID.SIGN_OUT as 'signOut',
+      icon: SignOut as React.ComponentType,
+    },
+  ];
+
+  const validReorderItemLabels: string[] = INITIAL_MENU_ITEMS.map(r => r.id);
+
+  return { INITIAL_MENU_ITEMS, validReorderItemLabels };
+};
+
+const getOrganizationSwitcherDefaultMenuItems = () => {
+  const INITIAL_MENU_ITEMS = [
+    {
+      name: localizationKeys('organizationSwitcher.action__createOrganization'),
+      id: ORGANIZATION_SWITCHER_ITEM_ID.CREATE_ORGANIZATION,
+      icon: Add,
     },
   ];
 
@@ -144,7 +179,7 @@ const isCustomMenuLink = (ci: CustomMenuItem): ci is CustomMenuLink => {
   return !!ci.href && !!ci.label && !ci.mount && !ci.unmount && !!ci.mountIcon && !!ci.unmountIcon;
 };
 
-const isReorderItem = (ci: CustomMenuItem, validItems: string[]): ci is UserButtonReorderItem => {
+const isReorderItem = (ci: CustomMenuItem, validItems: string[]): ci is MenuReorderItem => {
   return !ci.mount && !ci.unmount && !ci.mountIcon && !ci.unmountIcon && validItems.some(v => v === ci.label);
 };
 
