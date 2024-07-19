@@ -1,5 +1,18 @@
 # Change Log
 
+## 2.5.0
+
+### Minor Changes
+
+- - Introduced `subtitle__disconnected` under `userProfile.start.connectedAccountsSection` ([#3723](https://github.com/clerk/javascript/pull/3723)) by [@panteliselef](https://github.com/panteliselef)
+
+  - Aligned `signUp.start.clientMismatch` and `signIn.start.clientMismatch` to all languages.
+
+### Patch Changes
+
+- Updated dependencies [[`b2788f67b`](https://github.com/clerk/javascript/commit/b2788f67b75cce17af1a2f91a984bb826a5a42e1)]:
+  - @clerk/types@4.9.0
+
 ## 2.4.8
 
 ### Patch Changes

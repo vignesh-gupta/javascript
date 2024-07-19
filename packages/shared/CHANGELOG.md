@@ -1,5 +1,18 @@
 # Change Log
 
+## 2.4.0
+
+### Minor Changes
+
+- Support reading / writing / removing suffixed/un-suffixed cookies from `@clerk/clerk-js` and `@clerk/backend`. by [@dimkl](https://github.com/dimkl)
+
+  The `__session`, `__clerk_db_jwt` and `__client_uat` cookies will now include a suffix derived from the instance's publishakeKey. The cookie name suffixes are used to prevent cookie collisions, effectively enabling support for multiple Clerk applications running on the same domain.
+
+### Patch Changes
+
+- Updated dependencies [[`b2788f67b`](https://github.com/clerk/javascript/commit/b2788f67b75cce17af1a2f91a984bb826a5a42e1)]:
+  - @clerk/types@4.9.0
+
 ## 2.3.3
 
 ### Patch Changes

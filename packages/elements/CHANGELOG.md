@@ -1,5 +1,22 @@
 # @clerk/elements
 
+## 0.10.5
+
+### Patch Changes
+
+- Reverts [addition of relatedTarget check](https://github.com/clerk/javascript/pull/3762) in onFocus event handler which prevented fieldstate info from render on focus. ([#3770](https://github.com/clerk/javascript/pull/3770)) by [@alexcarpenter](https://github.com/alexcarpenter)
+
+- Handle call to `hasTags` on undefined `state` ([#3738](https://github.com/clerk/javascript/pull/3738)) by [@tmilewski](https://github.com/tmilewski)
+
+- Fixes issue where an invalid password field was immediately being refocused after submission causing the validation to run and show the success state. ([#3762](https://github.com/clerk/javascript/pull/3762)) by [@alexcarpenter](https://github.com/alexcarpenter)
+
+- Pass resource directly to machine over getSnapshot to avoid empty context ([#3738](https://github.com/clerk/javascript/pull/3738)) by [@tmilewski](https://github.com/tmilewski)
+
+- Update XState from 5.13.x to 5.15.x ([#3738](https://github.com/clerk/javascript/pull/3738)) by [@tmilewski](https://github.com/tmilewski)
+
+- Updated dependencies [[`b2788f67b`](https://github.com/clerk/javascript/commit/b2788f67b75cce17af1a2f91a984bb826a5a42e1)]:
+  - @clerk/types@4.9.0
+
 ## 0.10.4
 
 ### Patch Changes
